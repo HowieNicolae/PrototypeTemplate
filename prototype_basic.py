@@ -1,3 +1,8 @@
+"""
+BASIC PROTOTYPE
+
+"""
+
 # import the Flask class
 from flask import Flask
 

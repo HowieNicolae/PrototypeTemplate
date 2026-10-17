@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Fitness Tracker - Login</title>
+</head>
+<body>
+
+    <h2>Login</h2>
+    
+    <!-- Show error messages if authentication fails -->
+    <p id="error-message" style="color: #ef4444; display: none;"></p>
+
+    <!-- Standard Form fields -->
+    <div>
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" placeholder="Enter username">
+    </div>
+    
+    <div>
+        <label for="password">Password:</label><br>
+        <!-- Use type="password" so the characters are HIDDEN on screen -->
+         <!-- Use type="text" to show password on screen -->
+        <input type="password" id="password" placeholder="Enter password">
+    </div>
+
+    <button id="login-btn">Log In</button>
+
+    <script>
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            // 1. Grab values from the input fields
+            const usrValue = document.getElementById('username').value;
+            const pwdValue = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-message');
+
+            // Hide any previous errors
+            errorMsg.style.display = 'none';
+
+            // 2. Build the query string URL matching your Flask layout
+            const url = `/login/authenticate?usr=${encodeURIComponent(usrValue)}&pwd=${encodeURIComponent(pwdValue)}`;
+
+            try {
+                // 3. Send the request to your Flask API
+                const response = await fetch(url, { method: 'GET' });
+                const data = await response.json();
+
+                // 4. Check if the server returned a 200 OK status
+                if (response.status === 200) {
+                    // Redirect to your target page
+                    window.location.href = '/steps'; 
+                } else {
+                    // Prompt user to try again by showing the error message
+                    errorMsg.textContent = data.error || 'Invalid credentials. Please try again.';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Something went wrong. Please try again later.';
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,3 +1,8 @@
+"""
+BASIC PROTOTYPE WITH STYLING
+
+"""
+
 # import the Flask class
 from flask import Flask, render_template
 
