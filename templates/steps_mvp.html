@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Steps - Fitness Tracker</title>
+</head>
+<body>
+    <h2>Daily Steps Tracker</h2>
+
+    <p>Today's Steps: <strong id="step-count">{{ data.current }}</strong></p>
+    <p>Goal: <strong>{{ data.goal }}</strong></p>
+
+    <!-- Simple textbox for entering the step increments -->
+    <input type="text" id="steps-input" placeholder="e.g., 2000" style="max-width: 150px;"><br>
+    <button class="btn" id="add-steps-btn">Add Steps</button><br><br>
+
+    <button class="btn" onclick="window.location.href='/'">Log Out</button>
+
+    <script>
+        document.getElementById('add-steps-btn').addEventListener('click', async () => {
+            const countInput = document.getElementById('steps-input');
+            const countValue = countInput.value.trim();
+
+            if (!countValue || isNaN(countValue)) {
+                alert("Please enter a valid number of steps.");
+                return;
+            }
+
+            // Execute your Flask API route to update the database values
+            try {
+                const response = await fetch(`/steps/add/${countValue}`);
+                
+                if (response.ok) {
+                    // Refresh the current page view to show the new updated values if successful
+                    window.location.reload();
+                } else {
+                    alert("Failed to update steps. Please try again.");
+                }
+            } catch (err) {
+                alert("Error: ${err.message}");
+            }
+        });
+    </script>
+</body>
+</html>

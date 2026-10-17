@@ -10,13 +10,15 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 
-# one would not do this for a real-world MVP
-# rather use sqlite database to store usernames and passwords
+# Proof-of-concept mock implementation.
+# Production MVP deployment requires a robust database solution like SQLite.
 CREDENTIALS = (
     {"username": "admin", "password": "secr3t"},
     {"username": "Bob", "password": "pie67"},
     {"username": "Mary", "password": "abc123"},
 )
+
+STEPS_DATA = {"current": 6000, "goal": 10000}
 
 
 # define the function for the home / index page
@@ -49,13 +51,37 @@ def authenticate():
         if cred["username"] == username and cred["password"] == password:
             return jsonify({"message": "Login successful!"}), 200
 
+    # return JSON error message
     return jsonify({"error": "Invalid credentials"}), 401
 
 
 # define the function for the steps page
 @app.route("/steps")
 def steps():
-    return render_template("steps.html")
+    # pass the metrics dict to the template as a variable named 'data'
+    return render_template("steps_mvp.html", data=STEPS_DATA)
+
+
+@app.route("/steps/add/<count>")
+def add(count):
+    try:
+        # convert the count variable to an integer and update current steps
+        STEPS_DATA["current"] += int(count)
+
+        # return a JSON success message instead of rendering the full page
+        return (
+            jsonify(
+                {
+                    "message": "Steps updated successfully",
+                    "new_total": STEPS_DATA["current"],
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        # return JSON error message
+        return jsonify({"error": str(e)}), 400
 
 
 # standard coding partice for when running a python file from the command line
